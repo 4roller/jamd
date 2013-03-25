@@ -13,8 +13,10 @@
 		http://html5doctor.com/html5-audio-the-state-of-play/  
 		http://caniuse.com/
 		http://www.html5rocks.com/en/tutorials/file/dndfiles/
+		http://www.html5rocks.com/en/tutorials/webaudio/intro/
 		http://blog.gingertech.net/wp-content/uploads/2011/01/LCA_MM_AVProc2011/#slide1
 		http://thecssninja.com/talks/dnd_and_friends/
+
 -->
 <html lang="en">
 	<head>
@@ -31,11 +33,15 @@
 	<audio id="ap" src="" preload="metadata"></audio>
 
 	<div id="deck">
+		
 		<div id="display">
 			<div id="description"></div>
-			<div id="time">00:00:00</div>
-			<div id="duration">/ 00:00:00</div>
+			<div>
+				<div id="time">00:00:00</div>
+				<div id="duration">/ 00:00:00</div>
+			</div>
 			<div id="volumeLevel">Volume 100%</div>
+			<div id="pitchLevel">Speed: +-0</div>
 
 			<div id="trackProgressWrap">
 				<div id="buffer"></div>
@@ -43,16 +49,38 @@
 			</div>
 		</div>
 
+		<section id="legend">
+			<table>
+				<tr>	<th>Keys</th>			<th>Description</th>													</tr>
+				<tr>	<td>Space</td>			<td>Play / Pause</td> 													</tr>
+				<tr>	<td>&larr; &rarr;</td>	<td>Seek Forward / Backward 5 secs. <br />(shift for 1 min)</td> 		</tr>				
+				<tr>	<td>+ - </td>			<td>Volume up / down</td>												</tr>
+				<tr>	<td>[ ]</td>			<td>Speed up / down</td>												</tr>
+				<tr>	<td>\</td>				<td> Speed reset to neutral</td> 										</tr>
+				<tr>	<td>&lt; &gt; N P</td>	<td>Track Next / Previous (playlist)</td>								</tr>
+				<tr>	<td>C</td>				<td>Cue (Hold to play)</td>					</tr>
+				<tr>	<td>X</td>				<td>Mark Cue Spot</td>					</tr>
+				<tr>	<td>Z</td>				<td>Reset Cue to Start of Track</td>					</tr>
+			</table>
+		</section>
+
+
 		<div id="playerControls">
 			<button id="previousTrack">Previous Track</button>
 			<button id="seekBackward">Seek Back</button>
 			<button id="play">Play</button>
 			<button id="seekForward">Seek Forward</button>
 			<button id="nextTrack">Next Track</button>
-			<div id="sliderWrap">
+			<div id="volSlideWrap">
 				<input class="volumeSlider" type="range" min="0" max="100" value="100" />
 			</div>
+			<div id="pitchSlideWrap">
+				<input class="pitchSlider" type="range" min="50" max="150" value="100" />
+			</div>
 		</div> 
+
+
+
 	</div>
 
 	<div id="playlistWrap">
@@ -61,9 +89,9 @@
 		<ol id="playlist"></ol>
 	</div>
 		
+
+
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js "></script>
-<!--	<script src="assets/js/binaryajax.js"></script>
-	<script src="assets/js/id3.js"></script> -->
 	<script src="assets/js/jDataView.js"></script>
 	<script src="assets/js/jamd.js"></script>
 	<script src="assets/js/jamdPlaylist.js"></script>

@@ -84,7 +84,6 @@ var jamdPL = (function(){
 			$(e.target).removeClass('over');			
 		},
 		dropFile:function(e) {
-			//console.log('drop');
 			e.preventDefault();
 			var dt = e.originalEvent.dataTransfer,  
 			files = dt.files;
@@ -114,7 +113,6 @@ var jamdPL = (function(){
 		populatePlaylist: function(filelist) {
 			var playlist = [];
 			for(var i = filelist.length-1; i>=0; i--) {
-			//for(var i = 0; i < filelist.length; i++) {
 				jamdPL.getId3(filelist[i], function(obj) {
 					var plObject = {
 						"filename": String(obj.fileObject.name),

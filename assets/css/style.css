@@ -54,23 +54,26 @@ table {
   src: url("../fonts/digital-7__mono_.ttf"); }
 
 html {
-  background: #555555; }
+  background: #555555;
+  font-family: sans-serif; }
 
 #deck {
   position: relative;
   background-repeat: no-repeat;
   background-color: #222222;
   background-image: -webkit-gradient(linear, center top, center bottom, color-stop(0, #222222), color-stop(1, #111111));
-  padding-bottom: 10px; }
+  padding-bottom: 10px;
+  float: left; }
   #deck #display {
     display: inline-block;
     position: relative;
     height: auto;
     background-color: #0B9975;
-    margin: 14px;
+    margin: 10px 10px;
     border-radius: 5px;
     border: 2px solid #666666;
-    font-family: 'Digital',courier; }
+    font-family: 'Digital',courier;
+    float: left; }
     #deck #display #time {
       font-size: 50px;
       padding: 0 10px;
@@ -102,6 +105,14 @@ html {
       width: 95%;
       height: 10px; }
     #deck #display #volumeLevel {
+      display: inline-block;
+      font-size: 14px;
+      right: 10px;
+      bottom: 30px;
+      font-family: 'Proxima',courier;
+      margin: 0px 10px 5px; }
+    #deck #display #pitchLevel {
+      display: inline-block;
       font-size: 14px;
       right: 10px;
       bottom: 30px;
@@ -111,8 +122,8 @@ html {
       background-color: #0B8965;
       position: relative;
       display: block;
-      height: 18px;
-      margin: 0 0 0 0;
+      height: 20px;
+      margin: 0 0 5px 0;
       width: 100%; }
     #deck #display #trackProgressWrap #buffer {
       width: 0;
@@ -134,8 +145,11 @@ html {
       background: #555;
       cursor: pointer; }
   #deck #playerControls {
-    margin: 0 15px;
-    position: relative; }
+    margin: 0 10px 10px 10px;
+    position: relative;
+    border: 1px solid #333333;
+    height: 200px;
+    float: left; }
     #deck #playerControls button {
       background: #000;
       border: 1px solid #555555;
@@ -144,20 +158,42 @@ html {
       height: 40px;
       line-height: 20px;
       font-size: 14px; }
-    #deck #playerControls #sliderWrap {
+    #deck #playerControls #volSlideWrap {
       position: relative;
       display: inline-block;
       height: 25px;
       margin: 0 0 0 10px;
       width: 80px; }
-    #deck #playerControls #sliderWrap input[type="range"] {
+    #deck #playerControls #volSlideWrap input[type="range"] {
       -webkit-appearance: none;
       width: auto;
       height: 2px;
       background-color: #888;
       width: 100%;
       margin: 0; }
-    #deck #playerControls #sliderWrap input::-webkit-slider-thumb {
+    #deck #playerControls #volSlideWrap input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fefefe), color-stop(0.49, #dddddd), color-stop(0.51, #d1d1d1), color-stop(1, #a1a1a1)); }
+    #deck #playerControls #pitchSlideWrap {
+      position: relative;
+      display: inline-block;
+      height: 30px;
+      width: 80px;
+      border: 0px solid gold;
+      padding-top: 6px;
+      -webkit-transform: rotate(-90deg); }
+    #deck #playerControls #pitchSlideWrap input[type="range"] {
+      -webkit-appearance: none;
+      width: auto;
+      height: 2px;
+      background-color: #888;
+      width: 100%;
+      margin: 0; }
+    #deck #playerControls #pitchSlideWrap input::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 10px;
       height: 10px;
@@ -168,7 +204,8 @@ html {
 #playlistWrap {
   position: relative;
   display: block;
-  width: 500px; }
+  width: 500px;
+  float: left; }
   #playlistWrap h2 {
     font-family: "Proxima", helvetica, sans-serif;
     font-weight: bold;
@@ -211,3 +248,19 @@ html {
       #playlistWrap #playlist li.playing {
         font-style: italic;
         font-weight: bold; }
+
+#legend {
+  display: inline-block;
+  color: #fff;
+  font-family: sans-serif;
+  margin: 10px; }
+  #legend table {
+    border: 1px solid red;
+    font-size: 65%; }
+    #legend table th, #legend table tr {
+      border: 1px solid #444444;
+      text-align: left;
+      padding: 2px 5px; }
+    #legend table td {
+      border: 1px solid #444444;
+      padding: 2px 5px; }

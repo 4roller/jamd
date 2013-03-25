@@ -17,17 +17,18 @@ $sans: helvetica, sans-serif;
 
 @mixin noSelect {	-webkit-touch-callout: none;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;}
 
-html {background: #555 ;}
+html {background: #555 ; font-family:sans-serif;}
 #deck { 
-	position:relative; @include gradient(#222, #111); padding-bottom:10px;
+	position:relative; @include gradient(#222, #111); padding-bottom:10px; float:left;
 	#display {
-		display:inline-block; position:relative; height: auto; background-color: #0B9975; margin: 14px; border-radius: 5px;
-		border: 2px solid #666; font-family: 'Digital',courier;
+		display:inline-block; position:relative; height: auto; background-color: #0B9975; margin: 10px 10px; border-radius: 5px;
+		border: 2px solid #666; font-family: 'Digital',courier; float:left;
 		#time { font-size: 50px;  padding: 0 10px; display:inline-block; @include noSelect; }
 		#duration { font-size: 25px;  padding: 0px; display:inline-block; margin: 0 10px 0 0; @include noSelect;}
 		#description { font-family: 'Proxima'; font-size:11px; margin:5px; background:transparent; border:0; color: #000; width:95%; height:10px;}
-		#volumeLevel { font-size:14px;  right:10px; bottom: 30px; font-family: 'Proxima',courier; margin: 0px 10px 5px;}
-		#trackProgressWrap { background-color: #0B8965; position:relative; display: block;  height: 18px; margin: 0 0 0 0; width: 100%;}
+		#volumeLevel { display:inline-block; font-size:14px;  right:10px; bottom: 30px; font-family: 'Proxima',courier; margin: 0px 10px 5px;}
+		#pitchLevel { display:inline-block; font-size:14px;  right:10px; bottom: 30px; font-family: 'Proxima',courier; margin: 0px 10px 5px;}
+		#trackProgressWrap { background-color: #0B8965; position:relative; display: block;  height: 20px; margin: 0 0 5px 0; width: 100%;}
 		#trackProgressWrap #buffer { width:0; height:3px; top:9px; background-color: green; position:absolute; }
 		#trackProgressWrap input[type="range"] { -webkit-appearance:none; width:auto; height:2px;  background-color: #0B9975; width: 100%; margin:0;}
 		#trackProgressWrap input::-webkit-slider-thumb {
@@ -39,11 +40,11 @@ html {background: #555 ;}
 		}
 	}	
 	#playerControls {
-		margin: 0 15px; position:relative;
+		margin: 0 10px 10px 10px; position:relative; border:1px solid #333; height: 200px;float:left;
 		button { background:#000; border: 1px solid #555; font-family: $font; color:#fff; height:40px; line-height:20px; font-size:14px;}
-		#sliderWrap {position:relative; display: inline-block;  height: 25px; margin: 0 0 0 10px; width: 80px;}
-		#sliderWrap input[type="range"] { -webkit-appearance:none; width:auto; height:2px; background-color: #888; width: 100%; margin:0;}
-		#sliderWrap input::-webkit-slider-thumb{
+		#volSlideWrap {position:relative; display: inline-block;  height: 25px; margin: 0 0 0 10px; width: 80px;}
+		#volSlideWrap input[type="range"] { -webkit-appearance:none; width:auto; height:2px; background-color: #888; width: 100%; margin:0;}
+		#volSlideWrap input::-webkit-slider-thumb{
 		    -webkit-appearance:none; 
 		    width:10px; 
 		    height:10px;
@@ -51,14 +52,27 @@ html {background: #555 ;}
 		    cursor:pointer;
 		    background-image:
 		           -webkit-gradient(linear, left top, left bottom, color-stop(0, #fefefe), color-stop(0.49, #dddddd), color-stop(0.51, #d1d1d1), color-stop(1, #a1a1a1) );
-			}
+		}
+		#pitchSlideWrap { position:relative; display:inline-block; height: 30px; width:80px; border:0px solid gold; padding-top: 6px; 
+			-webkit-transform:rotate(-90deg);  }
+		#pitchSlideWrap input[type="range"] { -webkit-appearance:none; width:auto; height:2px; background-color: #888; width: 100%; margin:0;}
+		#pitchSlideWrap input::-webkit-slider-thumb{
+		    -webkit-appearance:none; 
+		    width:10px; 
+		    height:10px;
+		    border-radius:10px;
+		    cursor:pointer;
+		    background-image:
+		           -webkit-gradient(linear, left top, left bottom, color-stop(0, #fefefe), color-stop(0.49, #dddddd), color-stop(0.51, #d1d1d1), color-stop(1, #a1a1a1) );
+		}
+
 		
 	}
 
 }
 
 #playlistWrap {
-	position:relative; display:block; width: 500px;
+	position:relative; display:block; width: 500px; float:left; 
 	h2 { font-family: $font; font-weight:bold; font-size:20px; padding: 10px 0 10px 10px; background: #333; color:#fff; }
 	.dropInstructions { text-align:center; height: auto; display:inline-block;  width:200px;background:orange; padding: 10px 0; position:absolute; top: 0; right:0;}
 	.dropInstructions.over { background-color: green;}	
@@ -73,6 +87,16 @@ html {background: #555 ;}
 			&.playing { font-style:italic; font-weight:bold;} 
 		}
 
+	}
+
+}
+
+#legend {
+	display:inline-block;	color:#fff; font-family: sans-serif;  margin: 10px; 
+	table{ 
+		border:1px solid red; font-size:65%;
+		th, tr{border:1px solid #444; text-align:left; padding:2px 5px;}
+		td {border:1px solid #444; padding:2px 5px;}
 	}
 
 }

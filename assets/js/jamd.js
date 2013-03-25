@@ -4,6 +4,7 @@ var jamd = (function(){
 	var bufferInterval;
 	var currentVolume = ap.volume;
 	var userPressedPlayed, muted = false;
+	var cueMark = 0;
 
 	// Private functions
 	var getNiceTime = function(timeSlice) {
@@ -40,11 +41,19 @@ var jamd = (function(){
 			$('#nextTrack').click(function() { jamd.nextTrack(); }); 
 			$('#previousTrack').click(function() { jamd.previousTrack(); }); 
 			$('.volumeSlider').change(function(e) { jamd.volumeSet( $('.volumeSlider').val() / 100 ); });
+			$('.pitchSlider').change(function(e) { jamd.pitchSet( $('.pitchSlider').val() / 100 ); });
 			$('.trackProgress').change(function(e) { jamd.seek(e); })
 			$('#ap').on('loadedmetadata', function() { jamd.initTrack(); });
 			$('#ap').on('timeupdate', function() { jamd.updateTimer(); });
 			$('#ap').on('ended', function() { jamd.trackEnded(); });
 			$(d).on('keydown', function(e) { jamd.keyPress(e); });
+			$(d).on('keyup', function(e) { 
+				if(e.which == '67') {
+					ap.pause();
+					ap.currentTime = cueMark;
+					jamd.updateTimer();
+				}
+			});
 		
 		},
 		initTrack: function() {
@@ -62,6 +71,7 @@ var jamd = (function(){
 			//Update track progress slider with max value
 			var maxVal = (ap.duration * 100).toFixed(0);
 			d.querySelector('.trackProgress').setAttribute('max', maxVal);
+			cueMark = 0;
 
 		},
 		startBufferingMeter: function() {
@@ -128,6 +138,16 @@ var jamd = (function(){
 			d.querySelector('.volumeSlider').value = volume;
 			d.querySelector('#volumeLevel').innerHTML = 'Volume ' + volume + "%";
 		},
+		pitchSet:function(inPitch) {
+			ap.playbackRate = Math.round(inPitch*100)/100;
+			var playbackRate = (ap.playbackRate *100).toFixed(0);
+			d.querySelector('.pitchSlider').value = playbackRate;
+			var string = "Speed: ";
+			if(playbackRate == 100 ) { string += '+- 0'; }
+			if(playbackRate >100) { string += '+' + (playbackRate-100); }
+			if(playbackRate <100) { string += '-' + (playbackRate-100); }
+			d.querySelector('#pitchLevel').innerHTML = string;
+		},
 		toggleMute: function() {
 			if(!muted) {
 				muted = true;
@@ -164,19 +184,47 @@ var jamd = (function(){
 						jamd.volumeSet(volume);
 					}
 					break;
-				case 77: //Plus
+				case 77: // "m"
 					jamd.toggleMute();
 					break;
-				case 78: // n
+				case 78: // "n" 
 				case 190:
 					jamdPL.nextTrack();
 					break;
 				case 80:
-				case 188: // n
+				case 188: // "p"
 					jamdPL.previousTrack();
 					break;
-
-			}
+				case 220: // "\" Reset Pitch
+					jamd.pitchSet(1);
+					break;
+				case 221: // "]" +1 Pitch
+					if(ap.playbackRate < 1.49) {
+						var playbackRate = ap.playbackRate + 0.01;
+						jamd.pitchSet(playbackRate);
+					}
+					break;	
+				case 219: // "[" -1 Pitch
+					if(ap.playbackRate > .49) {
+						var playbackRate = ap.playbackRate - 0.01;
+						jamd.pitchSet(playbackRate);
+					}
+					break;	
+				case 90: // "z" begiinning of track
+					ap.currentTime = cueMark = 0;
+					jamd.updateTimer();
+					break;
+				case 67: // 'c' cue
+					if(ap.paused) {
+						ap.currentTime = cueMark;
+						ap.play();	
+					}
+					
+					break;
+				case 88: // 'x' cue mark
+					cueMark = ap.currentTime;
+					console.log("marked at: " + cueMark);
+ 			}
 		}
 
 	}
