@@ -54,6 +54,8 @@ var jamd = (function(){
 					jamd.updateTimer();
 				}
 			});
+
+			
 		
 		},
 		initTrack: function() {
@@ -102,7 +104,13 @@ var jamd = (function(){
 				userPressedPlayed = true; 
 				jamd.startBufferingMeter();
 			}
-			(ap.paused ? ap.play() : ap.pause() );
+			if(ap.paused) {
+				ap.play();
+				roverJS.go('Play');
+			} else {
+				roverJS.go('Pause');
+				ap.pause();
+			}
 		},
 		trackEnded:function() {
 			if(jamdPL) {
@@ -135,8 +143,10 @@ var jamd = (function(){
 		volumeSet:function(inVolume) {
 			ap.volume = Math.round(inVolume*100)/100;
 			var volume = (ap.volume *100).toFixed(0);
+			var volStr = 'Volume ' + volume + '%';
 			d.querySelector('.volumeSlider').value = volume;
-			d.querySelector('#volumeLevel').innerHTML = 'Volume ' + volume + "%";
+			d.querySelector('#volumeLevel').innerHTML = volStr;
+			roverJS.go(volStr);
 		},
 		pitchSet:function(inPitch) {
 			ap.playbackRate = Math.round(inPitch*100)/100;
@@ -164,6 +174,7 @@ var jamd = (function(){
 			//console.log(e.which);
 			switch(e.which) {
 				case 32: //Spacebar
+					e.preventDefault();
 					jamd.togglePlayPause();
 					break;
 				case 37: //Left Arrow

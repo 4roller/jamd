@@ -1,7 +1,7 @@
 
 var jamdPL = (function(){ 
 	var d = document;
-	var currentTrackIndex;
+	var currentTrackIndex,pushTimeout;
 	return {
 		playlist: [],
 		init: function() {
@@ -21,10 +21,14 @@ var jamdPL = (function(){
 			$('#playlist').on('dragleave', 'li', function(e) { jamdPL.dragLeave(e); });
 			$('#playlist').on('drop','li' ,function(e) { jamdPL.dropItem(e); });
 			
-			$('#playlist').on('click', 'li', function(e){ jamdPL.playThis(e); });
+			$('#playlist').on('click', 'li', function(e){ jamdPL.selectThis(e); });
+			// Listen for playlist Pushed event and select the first item in playlist.
+			$(document).on('plPushed', function(e){ 
+				var firstPlaylistItem = document.querySelector('.c2p');
+				$(firstPlaylistItem).click();
+			});
+		
 		},
-
-
 		dragItemStart: function(e) {
 			var siblings = e.originalEvent.target.parentNode.childNodes;
 			var el = e.target;
@@ -34,6 +38,7 @@ var jamdPL = (function(){
 			e.originalEvent.dataTransfer.setData('indexOfItem', indexOfItem);
 			e.originalEvent.dataTransfer.dropEffect = 'move';
 		},
+		// Reording Playlist items
 		dropItem: function(e) {
 			e.preventDefault();
 			var parent = e.originalEvent.target.parentNode;
@@ -58,8 +63,6 @@ var jamdPL = (function(){
 			forEach.call(siblings, function(item){
 				item.style.opacity = 1;
 			});
-
-			//$(siblings).css('opacity',1);
 			$(e.target).removeClass('over');
 			return false;
 		},
@@ -111,7 +114,6 @@ var jamdPL = (function(){
 
 		}, 
 		populatePlaylist: function(filelist) {
-			var playlist = [];
 			for(var i = filelist.length-1; i>=0; i--) {
 				jamdPL.getId3(filelist[i], function(obj) {
 					var plObject = {
@@ -127,15 +129,28 @@ var jamdPL = (function(){
 		push : function(obj) {
 			jamdPL.playlist.push(obj);
 			
+			if(pushTimeout) {
+				clearTimeout(pushTimeout);
+			}
+
 			var li = document.createElement('li');
 			li.innerHTML = obj.artist + " - " + obj.track;
   			li.setAttribute('data-src', obj.url);
-
   			li.setAttribute('draggable', 'true');
   			li.className = 'c2p';
 			document.querySelector('#playlist').appendChild(li);
+
+			if(jamdPL.playlist.length > 0 ) {
+				pushTimeout = setTimeout(function(){
+					//console.log(jamdPL.playlist.length);
+					var plPushed = new CustomEvent('plPushed');
+					document.dispatchEvent(plPushed);
+				},100); 
+			}
+
 		},
-		playThis: function(e) {
+		selectThis: function(e) {
+
 			var src = $(e.target).attr('data-src');
 			$('#ap').attr('src', src);
 			currentTrackIndex = $('.c2p').index( $(e.target) );
@@ -167,15 +182,11 @@ var jamdPL = (function(){
 				var ap = d.getElementById('ap');
 				ap.play();
 				
-				
 				var items = d.querySelectorAll('#playlist li');
-
 				for (var i = 0; i < items.length; i++) {
 					items[i].classList.remove('playing'); 
 				}
 				
-
-
 				var selector =  '#playlist li:nth-child(' + (parseInt(currentTrackIndex)+1) + ')';
 				d.querySelector(selector).classList.add('playing');
 		}
