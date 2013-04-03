@@ -100,13 +100,19 @@ var jamdPL = (function(){
 			r.onload = function(e) { 
 				result = e.target.result
 				var dv = new jDataView(result);
-				
 				if( dv.getString(3, dv.byteLength - 128) == "TAG") {
 					returnObj = {
 						"title": dv.getString(30, dv.tell()), 
 						"artist": dv.getString(30, dv.tell()),
 						'fileObject': f
 					};
+					callbackFn(returnObj);
+				} else { // No ID3 Tag
+					returnObj = {
+						"title": null, 
+						"artist": null,
+						'fileObject': f
+					}
 					callbackFn(returnObj);
 				}
 			}
@@ -134,7 +140,13 @@ var jamdPL = (function(){
 			}
 
 			var li = document.createElement('li');
-			li.innerHTML = obj.artist + " - " + obj.track;
+			
+			//console.log("[" + obj.artist + "]");
+			if(obj.artist == 'null') { 
+				li.innerHTML = obj.filename;
+			} else {
+				li.innerHTML = obj.artist + " - " + obj.track;		
+			}
   			li.setAttribute('data-src', obj.url);
   			li.setAttribute('draggable', 'true');
   			li.className = 'c2p';

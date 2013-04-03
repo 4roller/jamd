@@ -230,7 +230,6 @@ var jamd = (function(){
 						ap.currentTime = cueMark;
 						ap.play();	
 					}
-					
 					break;
 				case 88: // 'x' cue mark
 					cueMark = ap.currentTime;
