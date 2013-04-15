@@ -1,11 +1,10 @@
 
 var jamdPL = (function(){ 
 	var d = document;
-	var currentTrackIndex,pushTimeout;
+	var currentTrackIndex,pushTimeout, currentFiles;
 	return {
 		playlist: [],
 		init: function() {
-			//console.log('playlist init');
 			jamdPL.attatchListeners();
 		},
 		attatchListeners: function() {
@@ -24,6 +23,7 @@ var jamdPL = (function(){
 			$('#playlist').on('click', 'li', function(e){ jamdPL.selectThis(e); });
 			// Listen for playlist Pushed event and select the first item in playlist.
 			$(document).on('plPushed', function(e){ 
+				//console.log(e);
 				var firstPlaylistItem = document.querySelector('.c2p');
 				$(firstPlaylistItem).click();
 			});
@@ -88,15 +88,14 @@ var jamdPL = (function(){
 		},
 		dropFile:function(e) {
 			e.preventDefault();
-			var dt = e.originalEvent.dataTransfer,  
-			files = dt.files;
-			jamdPL.populatePlaylist(files);
+			var dt = e.originalEvent.dataTransfer;  
+			currentFiles = dt.files;
+			jamdPL.populatePlaylist(currentFiles);
 			$('.dropInstructions').removeClass('over');			
 			return false;
 		},
 		getId3: function(f, callbackFn) {
 			var r = new FileReader();
-
 			r.onload = function(e) { 
 				result = e.target.result
 				var dv = new jDataView(result);
@@ -120,7 +119,7 @@ var jamdPL = (function(){
 
 		}, 
 		populatePlaylist: function(filelist) {
-			for(var i = filelist.length-1; i>=0; i--) {
+			for(var i = 0; i<filelist.length; i++) {
 				jamdPL.getId3(filelist[i], function(obj) {
 					var plObject = {
 						"filename": String(obj.fileObject.name),
@@ -132,6 +131,19 @@ var jamdPL = (function(){
 				});
 			}
 		},
+		add2Dom : function(obj) {
+			var li = document.createElement('li');
+			
+			if(obj.artist == 'null') { 
+				li.innerHTML = obj.filename;
+			} else {
+				li.innerHTML = obj.artist + " - " + obj.track;		
+			}
+  		li.setAttribute('data-src', obj.url);
+  		li.setAttribute('draggable', 'true');
+  		li.className = 'c2p';
+			document.querySelector('#playlist').appendChild(li);
+		},
 		push : function(obj) {
 			jamdPL.playlist.push(obj);
 			
@@ -139,26 +151,29 @@ var jamdPL = (function(){
 				clearTimeout(pushTimeout);
 			}
 
-			var li = document.createElement('li');
-			
-			//console.log("[" + obj.artist + "]");
-			if(obj.artist == 'null') { 
-				li.innerHTML = obj.filename;
-			} else {
-				li.innerHTML = obj.artist + " - " + obj.track;		
-			}
-  			li.setAttribute('data-src', obj.url);
-  			li.setAttribute('draggable', 'true');
-  			li.className = 'c2p';
-			document.querySelector('#playlist').appendChild(li);
-
 			if(jamdPL.playlist.length > 0 ) {
 				pushTimeout = setTimeout(function(){
-					//console.log(jamdPL.playlist.length);
 					var plPushed = new CustomEvent('plPushed');
 					document.dispatchEvent(plPushed);
-				},100); 
+					jamdPL.sortPL();
+				},500); 
 			}
+
+		},
+		sortPL: function() {
+			var newPL = [];
+			for(var i = 0; i < currentFiles.length; i++) {
+				var j = jamdPL.playlist.length;
+				while(j--) {
+						if( jamdPL.playlist[j].filename === currentFiles[i].name ) {
+							newPL.push( jamdPL.playlist[j] );
+							jamdPL.add2Dom( jamdPL.playlist[j] );
+							jamdPL.playlist.splice(j,1);
+							break;
+						}
+				}
+			}
+			jamdPL.playlist = newPL;
 
 		},
 		selectThis: function(e) {

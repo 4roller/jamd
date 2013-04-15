@@ -233,7 +233,7 @@ var jamd = (function(){
 					break;
 				case 88: // 'x' cue mark
 					cueMark = ap.currentTime;
-					console.log("marked at: " + cueMark);
+					//console.log("marked at: " + cueMark);
  			}
 		}
 
