@@ -23,9 +23,10 @@ var jamdPL = (function(){
 			$('#playlist').on('click', 'li', function(e){ jamdPL.selectThis(e); });
 			// Listen for playlist Pushed event and select the first item in playlist.
 			$(document).on('plPushed', function(e){ 
-				//console.log(e);
+				jamdPL.sortPL();
 				var firstPlaylistItem = document.querySelector('.c2p');
 				$(firstPlaylistItem).click();
+
 			});
 		
 		},
@@ -89,10 +90,22 @@ var jamdPL = (function(){
 		dropFile:function(e) {
 			e.preventDefault();
 			var dt = e.originalEvent.dataTransfer;  
-			currentFiles = dt.files;
-			jamdPL.populatePlaylist(currentFiles);
+			var possibleURL = dt.getData(dt.types[0]);
+
+			if(possibleURL.length > 0) {
+				ap.src = possibleURL;
+				//console.log(possibleURL);
+				//jamdPL.populatePlayListByURLs(possibleURL);
+			} else {
+				currentFiles = dt.files;	
+				jamdPL.populatePlaylistByFiles(currentFiles);
+			}
+			
 			$('.dropInstructions').removeClass('over');			
 			return false;
+
+			// Interesting way to do a forEach using (call);
+			// [].forEach.call(dt.types, function (type) {});
 		},
 		getId3: function(f, callbackFn) {
 			var r = new FileReader();
@@ -118,7 +131,16 @@ var jamdPL = (function(){
 			r.readAsArrayBuffer(f);
 
 		}, 
-		populatePlaylist: function(filelist) {
+		populatePlayListByURLs: function(urls) {
+			var plObject = {
+				"filename": String(urls),
+				"track": String(urls),
+				"artist": String('via the Web'),
+				"url": urls
+			};
+			jamdPL.push(plObject);
+		},
+		populatePlaylistByFiles: function(filelist) {
 			for(var i = 0; i<filelist.length; i++) {
 				jamdPL.getId3(filelist[i], function(obj) {
 					var plObject = {
@@ -155,7 +177,6 @@ var jamdPL = (function(){
 				pushTimeout = setTimeout(function(){
 					var plPushed = new CustomEvent('plPushed');
 					document.dispatchEvent(plPushed);
-					jamdPL.sortPL();
 				},500); 
 			}
 
