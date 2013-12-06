@@ -1,7 +1,7 @@
 var jamd = (function(){
 	var d = document;
 	var ap = d.getElementById('ap');
-	var bufferInterval;
+	var bufferInterval, fadeInterval;
 	var currentVolume = ap.volume;
 	var userPressedPlayed, muted = false;
 	var cueMark = 0;
@@ -168,7 +168,24 @@ var jamd = (function(){
 				jamd.volumeSet(currentVolume);
 			}
 		},
+		fade: function() {
+			fadeInterval = setInterval(function() {
+				if(ap.volume > 0) {
+					var volume = ap.volume - 0.05; 
+					jamd.volumeSet(volume);
+				} else {
+					clearInterval(fadeInterval);
+					if(!ap.paused) {
+						jamd.togglePlayPause();	
+					} else {
+						
+					}
+					
+				} 
 
+			}, 100);
+
+		},
 		// Keyboard events
 		keyPress: function(e) {
 			//console.log(e.which);
@@ -234,6 +251,9 @@ var jamd = (function(){
 				case 88: // 'x' cue mark
 					cueMark = ap.currentTime;
 					//console.log("marked at: " + cueMark);
+					break;
+				case 70: // 'f' fade
+					jamd.fade();
  			}
 		}
 

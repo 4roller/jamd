@@ -63,7 +63,8 @@ html {
   background-color: #222222;
   background-image: -webkit-gradient(linear, center top, center bottom, color-stop(0, #222222), color-stop(1, #111111));
   padding-bottom: 10px;
-  float: left; }
+  float: left;
+  width: 500px; }
   #deck #display {
     display: block;
     position: relative;
@@ -175,14 +176,14 @@ html {
       width: 80px;
       border: 0px solid gold;
       padding-top: 6px;
-      -webkit-transform: rotate(-90deg); }
+      -webkit-transform: rotate(0deg); }
     #deck #playerControls #pitchSlideWrap input[type="range"] {
       -webkit-appearance: none;
       width: auto;
       height: 2px;
       background-color: #888;
-      width: 100%;
-      margin: 0; }
+      width: 80%;
+      margin: 0 0 0 10px; }
     #deck #playerControls #pitchSlideWrap input::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 10px;

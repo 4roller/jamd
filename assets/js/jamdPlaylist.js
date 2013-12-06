@@ -13,22 +13,18 @@ var jamdPL = (function(){
 			$('.dropInstructions').on('dragover', function(e) { jamdPL.dragOver(e); });
 			$('.dropInstructions').on('dragleave', function(e) { jamdPL.dragLeave(e); });
 			$('.dropInstructions').on('drop', function(e) { jamdPL.dropFile(e); });
-			
 			$('#playlist').on('dragstart', 'li', function(e) { jamdPL.dragItemStart(e); });
 			$('#playlist').on('dragenter', 'li', function(e) { jamdPL.dragEnter(e); });
 			$('#playlist').on('dragover', 'li', function(e) { jamdPL.dragOver(e); });
 			$('#playlist').on('dragleave', 'li', function(e) { jamdPL.dragLeave(e); });
 			$('#playlist').on('drop','li' ,function(e) { jamdPL.dropItem(e); });
-			
 			$('#playlist').on('click', 'li', function(e){ jamdPL.selectThis(e); });
 			// Listen for playlist Pushed event and select the first item in playlist.
 			$(document).on('plPushed', function(e){ 
 				jamdPL.sortPL();
 				var firstPlaylistItem = document.querySelector('.c2p');
-				$(firstPlaylistItem).click();
-
+				//$(firstPlaylistItem).click();
 			});
-		
 		},
 		dragItemStart: function(e) {
 			var siblings = e.originalEvent.target.parentNode.childNodes;
@@ -55,11 +51,9 @@ var jamdPL = (function(){
 			} else {
 				jamdPL.playlist.splice(indexOfItem+1, 1);
 			}
-
 			if(currentTrackIndex == indexOfItem) {
 				currentTrackIndex = currentIndex-1;
 			}
-
 			var forEach = Array.prototype.forEach;
 			forEach.call(siblings, function(item){
 				item.style.opacity = 1;
@@ -67,10 +61,6 @@ var jamdPL = (function(){
 			$(e.target).removeClass('over');
 			return false;
 		},
-
-
-
-
 		// Drag and Drop event handlers 
 		dragStart: function(e) {
 			var el = e.target;
@@ -93,9 +83,17 @@ var jamdPL = (function(){
 			var possibleURL = dt.getData(dt.types[0]);
 
 			if(possibleURL.length > 0) {
-				ap.src = possibleURL;
-				//console.log(possibleURL);
-				//jamdPL.populatePlayListByURLs(possibleURL);
+				var tempArr = [];
+				var urlArr = possibleURL.split(/\n/);
+				urlArr.forEach(function(obj) {
+					var newObj = {
+						"name" : obj,
+						"type" : "audio/stream"
+					};
+					tempArr.push(newObj);	
+				});
+				currentFiles = tempArr;
+				jamdPL.populatePlayListByURLs(currentFiles);
 			} else {
 				currentFiles = dt.files;	
 				jamdPL.populatePlaylistByFiles(currentFiles);
@@ -131,14 +129,16 @@ var jamdPL = (function(){
 			r.readAsArrayBuffer(f);
 
 		}, 
-		populatePlayListByURLs: function(urls) {
-			var plObject = {
-				"filename": String(urls),
-				"track": String(urls),
-				"artist": String('via the Web'),
-				"url": urls
-			};
-			jamdPL.push(plObject);
+		populatePlayListByURLs: function(filelist) {
+			for(var i = 0; i<filelist.length; i++) {
+				var plObject = {
+					"filename": filelist[i].name,
+					"track": "unknown",
+					"artist": "unknown",
+					"url": filelist[i].name
+				};
+				jamdPL.push(plObject);
+			}
 		},
 		populatePlaylistByFiles: function(filelist) {
 			for(var i = 0; i<filelist.length; i++) {
@@ -168,37 +168,37 @@ var jamdPL = (function(){
 		},
 		push : function(obj) {
 			jamdPL.playlist.push(obj);
-			
 			if(pushTimeout) {
 				clearTimeout(pushTimeout);
 			}
-
 			if(jamdPL.playlist.length > 0 ) {
 				pushTimeout = setTimeout(function(){
 					var plPushed = new CustomEvent('plPushed');
 					document.dispatchEvent(plPushed);
 				},500); 
 			}
-
 		},
 		sortPL: function() {
+			var arr = [];
 			var newPL = [];
 			for(var i = 0; i < currentFiles.length; i++) {
 				var j = jamdPL.playlist.length;
 				while(j--) {
-						if( jamdPL.playlist[j].filename === currentFiles[i].name ) {
-							newPL.push( jamdPL.playlist[j] );
-							jamdPL.add2Dom( jamdPL.playlist[j] );
-							jamdPL.playlist.splice(j,1);
-							break;
-						}
+					if( jamdPL.playlist[j].filename === currentFiles[i].name ) {
+						newPL.push( jamdPL.playlist[j] );
+						jamdPL.add2Dom( jamdPL.playlist[j] );
+						jamdPL.playlist.splice(j,1);
+						break;
+					}
 				}
 			}
-			jamdPL.playlist = newPL;
-
+			if(jamdPL.playlist.length != 0) { 
+				arr = jamdPL.playlist;
+				arr = arr.concat(newPL); 
+			} else { arr = newPL; }
+			jamdPL.playlist = arr;
 		},
 		selectThis: function(e) {
-
 			var src = $(e.target).attr('data-src');
 			$('#ap').attr('src', src);
 			currentTrackIndex = $('.c2p').index( $(e.target) );
@@ -210,38 +210,33 @@ var jamdPL = (function(){
 		},
 		getCurrentMeta: function() {
 			return jamdPL.playlist[currentTrackIndex];
-		},
+		}, 
 		previousTrack: function() {
 			if(currentTrackIndex >= 1) {
 				currentTrackIndex--;
 				jamdPL.playTrack();
 			}
-
 		},
 		nextTrack: function() {
+			console.log(jamdPL.playlist.length);
 			if(currentTrackIndex != jamdPL.playlist.length-1 ) {
 				currentTrackIndex++;
-				jamdPL.playTrack();				
+				jamdPL.playTrack();					
 			}
 		},
 		playTrack: function() {
-				var src = jamdPL.playlist[currentTrackIndex].url;
-				d.querySelector('#ap').setAttribute('src', src);
-				var ap = d.getElementById('ap');
-				ap.play();
-				
-				var items = d.querySelectorAll('#playlist li');
-				for (var i = 0; i < items.length; i++) {
-					items[i].classList.remove('playing'); 
-				}
-				
-				var selector =  '#playlist li:nth-child(' + (parseInt(currentTrackIndex)+1) + ')';
-				d.querySelector(selector).classList.add('playing');
+			var src = jamdPL.playlist[currentTrackIndex].url;
+			d.querySelector('#ap').setAttribute('src', src);
+			var ap = d.getElementById('ap');
+			ap.play();
+			var items = d.querySelectorAll('#playlist li');
+			for (var i = 0; i < items.length; i++) {
+				items[i].classList.remove('playing'); 
+			}
+			var selector =  '#playlist li:nth-child(' + (parseInt(currentTrackIndex)+1) + ')';
+			d.querySelector(selector).classList.add('playing');
 		}
-
-
 	}
-
 })();
 
 $(document).ready(function() {

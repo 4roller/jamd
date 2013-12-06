@@ -19,7 +19,7 @@ $sans: helvetica, sans-serif;
 
 html {background: #555 ; font-family:sans-serif;}
 #deck { 
-	position:relative; @include gradient(#222, #111); padding-bottom:10px; float:left;
+	position:relative; @include gradient(#222, #111); padding-bottom:10px; float:left; width:500px;
 	#display {
 		display:block; position:relative; height: auto; background-color: #0B9975; margin: 10px 10px; border-radius: 5px;
 		border: 2px solid #666; font-family: 'Digital',courier; 
@@ -53,9 +53,9 @@ html {background: #555 ; font-family:sans-serif;}
 		    background-image:
 		           -webkit-gradient(linear, left top, left bottom, color-stop(0, #fefefe), color-stop(0.49, #dddddd), color-stop(0.51, #d1d1d1), color-stop(1, #a1a1a1) );
 		}
-		#pitchSlideWrap { position:relative; display:inline-block; height: 30px; width:80px; border:0px solid gold; padding-top: 6px; 
-			-webkit-transform:rotate(-90deg);  }
-		#pitchSlideWrap input[type="range"] { -webkit-appearance:none; width:auto; height:2px; background-color: #888; width: 100%; margin:0;}
+		#pitchSlideWrap { position:relative; display:inline-block; height: 30px; width:80px; border:0px solid gold; padding-top: 6px;
+			-webkit-transform:rotate(-0deg);  }
+		#pitchSlideWrap input[type="range"] { -webkit-appearance:none; width:auto; height:2px; background-color: #888; width: 80%; margin:0 0 0 10px; }
 		#pitchSlideWrap input::-webkit-slider-thumb{
 		    -webkit-appearance:none; 
 		    width:10px; 
