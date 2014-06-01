@@ -63,7 +63,6 @@ html {
   background-color: #222222;
   background-image: -webkit-gradient(linear, center top, center bottom, color-stop(0, #222222), color-stop(1, #111111));
   padding-bottom: 10px;
-  float: left;
   width: 500px; }
   #deck #display {
     display: block;
@@ -220,8 +219,7 @@ html {
 #playlistWrap {
   position: relative;
   display: block;
-  width: 500px;
-  float: left; }
+  width: 500px; }
   #playlistWrap h2 {
     font-family: "Proxima", helvetica, sans-serif;
     font-weight: bold;

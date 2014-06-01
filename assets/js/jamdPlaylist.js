@@ -8,40 +8,40 @@ var jamdPL = (function(){
 			jamdPL.attatchListeners();
 		},
 		attatchListeners: function() {
-			$('.dropInstructions').on('dragstart', function(e) { jamdPL.dragStart(e); });
-			$('.dropInstructions').on('dragenter', function(e) { jamdPL.dragEnter(e); });
-			$('.dropInstructions').on('dragover', function(e) { jamdPL.dragOver(e); });
-			$('.dropInstructions').on('dragleave', function(e) { jamdPL.dragLeave(e); });
-			$('.dropInstructions').on('drop', function(e) { jamdPL.dropFile(e); });
-			$('#playlist').on('dragstart', 'li', function(e) { jamdPL.dragItemStart(e); });
-			$('#playlist').on('dragenter', 'li', function(e) { jamdPL.dragEnter(e); });
-			$('#playlist').on('dragover', 'li', function(e) { jamdPL.dragOver(e); });
-			$('#playlist').on('dragleave', 'li', function(e) { jamdPL.dragLeave(e); });
-			$('#playlist').on('drop','li' ,function(e) { jamdPL.dropItem(e); });
-			$('#playlist').on('click', 'li', function(e){ jamdPL.selectThis(e); });
+			d.querySelector('.dropInstructions').addEventListener('dragstart', function(e) { jamdPL.dragStart(e); });
+			d.querySelector('.dropInstructions').addEventListener('dragenter', function(e) { jamdPL.dragEnter(e); });
+			d.querySelector('.dropInstructions').addEventListener('dragover', function(e) { jamdPL.dragOver(e); });
+			d.querySelector('.dropInstructions').addEventListener('dragleave', function(e) { jamdPL.dragLeave(e); });
+			d.querySelector('.dropInstructions').addEventListener('drop', function(e) { jamdPL.dropFile(e); });
+			d.querySelector('#playlist').addEventListener('dragstart', function(e) { jamdPL.dragItemStart(e); });
+			d.querySelector('#playlist').addEventListener('dragenter', function(e) { jamdPL.dragEnter(e); });
+			d.querySelector('#playlist').addEventListener('dragover',  function(e) { jamdPL.dragOver(e); });
+			d.querySelector('#playlist').addEventListener('dragleave', function(e) { jamdPL.dragLeave(e); });
+			d.querySelector('#playlist').addEventListener('drop', function(e) { jamdPL.dropItem(e); });
+			d.querySelector('#playlist').addEventListener('click', function(e){ jamdPL.selectThis(e); });
 			// Listen for playlist Pushed event and select the first item in playlist.
-			$(document).on('plPushed', function(e){ 
+			d.addEventListener('plPushed', function(e){ 
 				jamdPL.sortPL();
-				var firstPlaylistItem = document.querySelector('.c2p');
-				//$(firstPlaylistItem).click();
+				//var firstPlaylistItem = document.querySelector('.c2p');
+				//d.querySelector(firstPlaylistItem).click();
 			});
 		},
 		dragItemStart: function(e) {
-			var siblings = e.originalEvent.target.parentNode.childNodes;
+			var siblings = e.target.parentNode.childNodes;
 			var el = e.target;
 			//Strange way to find index of the item in a list without converting domElements to array
 			var indexOfItem =  Array.prototype.indexOf.call(siblings, el); 
 			el.style.opacity = '0.4';
-			e.originalEvent.dataTransfer.setData('indexOfItem', indexOfItem);
-			e.originalEvent.dataTransfer.dropEffect = 'move';
+			e.dataTransfer.setData('indexOfItem', indexOfItem);
+			e.dataTransfer.dropEffect = 'move';
 		},
 		// Reording Playlist items
 		dropItem: function(e) {
 			e.preventDefault();
-			var parent = e.originalEvent.target.parentNode;
+			var parent = e.target.parentNode;
 			var siblings = parent.childNodes;
 			var el = e.target;
-			var indexOfItem =  parseInt(e.originalEvent.dataTransfer.getData('indexOfItem'));
+			var indexOfItem =  parseInt(e.dataTransfer.getData('indexOfItem'));
 			var currentIndex = parseInt(Array.prototype.indexOf.call(siblings, el));
 			parent.insertBefore(siblings[indexOfItem], siblings[currentIndex]);
 			var item = jamdPL.playlist[indexOfItem];
@@ -56,30 +56,30 @@ var jamdPL = (function(){
 			}
 			var forEach = Array.prototype.forEach;
 			forEach.call(siblings, function(item){
-				item.style.opacity = 1;
+				item.style.opacity = '1';
 			});
-			$(e.target).removeClass('over');
+			e.target.classList.remove('over');
 			return false;
 		},
 		// Drag and Drop event handlers 
 		dragStart: function(e) {
 			var el = e.target;
-			$(el).css('opacity', '0.4');
-			e.originalEvent.dataTransfer.dropEffect = 'move';
+			el.style.opacity = '0.4';
+			e.dataTransfer.dropEffect = 'move';
 		},
 		dragEnter: function(e) {
-			$(e.target).addClass('over');
+			e.target.classList.add('over');
 		},
 		dragOver: function(e) {
 			e.preventDefault();
 			return false;
 		},
 		dragLeave: function(e) {
-			$(e.target).removeClass('over');			
+			e.target.classList.remove('over');			
 		},
 		dropFile:function(e) {
 			e.preventDefault();
-			var dt = e.originalEvent.dataTransfer;  
+			var dt = e.dataTransfer;  
 			var possibleURL = dt.getData(dt.types[0]);
 
 			if(possibleURL.length > 0) {
@@ -99,7 +99,7 @@ var jamdPL = (function(){
 				jamdPL.populatePlaylistByFiles(currentFiles);
 			}
 			
-			$('.dropInstructions').removeClass('over');			
+			d.querySelector('.dropInstructions').classList.remove('over');			
 			return false;
 
 			// Interesting way to do a forEach using (call);
@@ -195,15 +195,23 @@ var jamdPL = (function(){
 			if(jamdPL.playlist.length != 0) { 
 				arr = jamdPL.playlist;
 				arr = arr.concat(newPL); 
-			} else { arr = newPL; }
+			} else { 
+				arr = newPL; 
+			}
 			jamdPL.playlist = arr;
 		},
 		selectThis: function(e) {
-			var src = $(e.target).attr('data-src');
-			$('#ap').attr('src', src);
-			currentTrackIndex = $('.c2p').index( $(e.target) );
-			$('#playlist li').css('color', '#000').removeClass('playing');
-			$(e.target).addClass('playing');
+			var src = e.target.getAttribute('data-src');
+			d.querySelector('#ap').setAttribute('src', src);
+
+			var arr = d.querySelectorAll('.c2p');
+			for(var i=0;i<arr.length;i++){
+				if(arr[i] == e.target){
+					currentTrackIndex = i;
+				}
+				arr[i].classList.remove('playing');
+			}
+			e.target.classList.add('playing');
 		},
 		getCurrentTrackIndex: function() {
 			return currentTrackIndex;
@@ -218,7 +226,6 @@ var jamdPL = (function(){
 			}
 		},
 		nextTrack: function() {
-			console.log(jamdPL.playlist.length);
 			if(currentTrackIndex != jamdPL.playlist.length-1 ) {
 				currentTrackIndex++;
 				jamdPL.playTrack();					
@@ -227,7 +234,7 @@ var jamdPL = (function(){
 		playTrack: function() {
 			var src = jamdPL.playlist[currentTrackIndex].url;
 			d.querySelector('#ap').setAttribute('src', src);
-			var ap = d.getElementById('ap');
+			var ap = d.querySelector('#ap');
 			ap.play();
 			var items = d.querySelectorAll('#playlist li');
 			for (var i = 0; i < items.length; i++) {
@@ -239,6 +246,5 @@ var jamdPL = (function(){
 	}
 })();
 
-$(document).ready(function() {
-	jamdPL.init();
-});
+
+jamdPL.init();

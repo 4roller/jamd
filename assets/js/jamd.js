@@ -34,20 +34,19 @@ var jamd = (function(){
 			//setTimeout(function() { jamd.initTrack(); }, 1000);	
 		},
 		attachListeners: function() {
-			$('#play').click(function() { jamd.togglePlayPause(); });
-			$('#pause').click(function() { jamd.togglePlayPause(); });
-			$('#seekForward').click(function() { jamd.seekForward(); }); 
-			$('#seekBackward').click(function() { jamd.seekBackward(); }); 
-			$('#nextTrack').click(function() { jamd.nextTrack(); }); 
-			$('#previousTrack').click(function() { jamd.previousTrack(); }); 
-			$('.volumeSlider').change(function(e) { jamd.volumeSet( $('.volumeSlider').val() / 100 ); });
-			$('.pitchSlider').change(function(e) { jamd.pitchSet( $('.pitchSlider').val() / 100 ); });
-			$('.trackProgress').change(function(e) { jamd.seek(e); })
-			$('#ap').on('loadedmetadata', function() { jamd.initTrack(); });
-			$('#ap').on('timeupdate', function() { jamd.updateTimer(); });
-			$('#ap').on('ended', function() { jamd.trackEnded(); });
-			$(d).on('keydown', function(e) { jamd.keyPress(e); });
-			$(d).on('keyup', function(e) { 
+			d.querySelector('#play').addEventListener('click', function() { jamd.togglePlayPause(); });
+			d.querySelector('#seekForward').addEventListener('click', function() { jamd.seekForward(); }); 
+			d.querySelector('#seekBackward').addEventListener('click', function() { jamd.seekBackward(); }); 
+			// d.querySelector('#nextTrack').addEventListener('click', function() { jamd.nextTrack(); }); 
+			// d.querySelector('#previousTrack').addEventListener('click', function() { jamd.previousTrack(); }); 
+			d.querySelector('.volumeSlider').addEventListener('change', function(e) { jamd.volumeSet( d.querySelector('.volumeSlider').val() / 100 ); });
+			d.querySelector('.pitchSlider').addEventListener('change', function(e) { jamd.pitchSet( d.querySelector('.pitchSlider').val() / 100 ); });
+			d.querySelector('.trackProgress').addEventListener('change', function(e) { jamd.seek(e); })
+			d.querySelector('#ap').addEventListener('loadedmetadata', function() { jamd.initTrack(); });
+			d.querySelector('#ap').addEventListener('timeupdate', function() { jamd.updateTimer(); });
+			d.querySelector('#ap').addEventListener('ended', function() { jamd.trackEnded(); });
+			d.addEventListener('keydown', function(e) { jamd.keyPress(e); });
+			d.addEventListener('keyup', function(e) { 
 				if(e.which == '67') {
 					ap.pause();
 					ap.currentTime = cueMark;
@@ -65,7 +64,7 @@ var jamd = (function(){
 				var string = String(obj.artist + " - " + obj.track);
 				d.querySelector('#description').innerHTML = string;
 			} else {
-				var fileName = $('#ap').attr('src');
+				var fileName = d.querySelector('#ap').attr('src');
 				d.querySelector('#description').innerHTML = decodeURIComponent(fileName);
 			}
 			d.querySelector('#duration').innerHTML = "/ " + getNiceTime(ap.duration);
@@ -120,7 +119,7 @@ var jamd = (function(){
 
 		//Seek
 		seek: function(e) {
-			ap.currentTime = parseInt($('.trackProgress').val()) / 100; 
+			ap.currentTime = parseInt(d.querySelector('.trackProgress').val()) / 100; 
 			jamd.updateTimer();
 		},
 		seekForward: function(i) {
@@ -177,14 +176,14 @@ var jamd = (function(){
 					clearInterval(fadeInterval);
 					if(!ap.paused) {
 						jamd.togglePlayPause();	
-					} else {
-						
 					}
-					
 				} 
-
 			}, 100);
-
+		},
+		openUrl: function() {
+			var blob = "https://www.youtube.com/e911c9ba-f8cb-42d4-bde5-e362a9697a77";
+			console.log(blob);
+			ap.src = "http://solid.it.cx/Audio/Arctic%20Monkeys/Arctic%20Monkeys%20-%20Bigger%20Boys%20And%20Stolen%20Sweethearts.mp3";
 		},
 		// Keyboard events
 		keyPress: function(e) {
@@ -201,19 +200,22 @@ var jamd = (function(){
 					(e.shiftKey ? jamd.seekForward(1) : jamd.seekForward() );
 					break;
 				case 189: //Minus					
-					if(ap.volume > 0.05) { 
+					if(ap.volume > 0.00) { 
 						var volume = ap.volume - 0.05; 
 						jamd.volumeSet(volume);
 					}
 					break;
 				case 187: //Plus
-					if(ap.volume < 0.95) { 
+					if(ap.volume < 1.00) { 
 						var volume = ap.volume + 0.05; 
 						jamd.volumeSet(volume);
 					}
 					break;
 				case 77: // "m"
 					jamd.toggleMute();
+					break;
+				case 79: // "o"
+					jamd.openUrl();
 					break;
 				case 78: // "n" 
 				case 190:
@@ -260,6 +262,7 @@ var jamd = (function(){
 	}
 })();
 
-$(document).ready(function() {
-	jamd.init();
-});
+window.onload = function(){
+	jamd.init();	
+};
+

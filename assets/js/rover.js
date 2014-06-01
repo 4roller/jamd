@@ -4,16 +4,13 @@ var roverJS = (function() {
 			//console.log('roverJS init');
 		},
 		go: function(text) {
-			$('#over').html(text);
-			$('#over').addClass('go');
+			document.querySelector('#over').innerHTML = text;
+			document.querySelector('#over').classList.add('go');
 			setTimeout(function(){
-				$('#over').removeClass('go');
+				document.querySelector('#over').classList.remove('go');
 			},500);
-
-
 		}
 	}
-
 
 })();
 
